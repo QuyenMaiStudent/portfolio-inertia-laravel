@@ -7,7 +7,7 @@ export default function ThemeSwitch() {
         try {
             const v = localStorage.getItem(THEME_KEY);
             if (v === 'light' || v === 'dark') return v;
-            // fallback to OS preference
+            // dùng mặc định theo cài đặt OS nếu chưa có trong localStorage
             if (typeof window !== 'undefined' && window.matchMedia) {
                 return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
             }
@@ -17,9 +17,9 @@ export default function ThemeSwitch() {
         }
     });
 
-    // apply synchronously to avoid flash
+    // áp dụng đồng bộ để tránh hiện tượng flash
     useLayoutEffect(() => {
-        const root = document.documentElement;
+        const root = document.body;
         if (theme === 'dark') {
             root.classList.add('dark');
         } else {
@@ -28,11 +28,11 @@ export default function ThemeSwitch() {
         try {
             localStorage.setItem(THEME_KEY, theme);
         } catch {
-            // ignore
+            // bỏ qua
         }
     }, [theme]);
 
-    // keep localStorage in sync if other tab changed theme
+    // giữ localStorage đồng bộ nếu tab khác thay đổi theme
     useEffect(() => {
         const onStorage = (e: StorageEvent) => {
             if (e.key === THEME_KEY && (e.newValue === 'light' || e.newValue === 'dark')) {
